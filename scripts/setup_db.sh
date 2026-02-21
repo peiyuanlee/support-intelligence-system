@@ -17,6 +17,6 @@ EOF
 
 echo "Database and user created successfully"
 
-psql -U airflow_user -d support_intelligence -f scripts/create_tables.sql
+psql -U airflow_user -d support_intelligence -f scripts/db_init.sql
 
 echo "Tables created successfully"

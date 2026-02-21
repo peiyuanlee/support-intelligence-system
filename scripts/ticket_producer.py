@@ -1,21 +1,17 @@
 import json
-import logging
-from confluent_kafka import Consumer, Producer, KafkaError
+from confluent_kafka import Producer
 from langchain_community.llms import Ollama
 from langchain_classic.prompts import PromptTemplate
-from langchain_classic.chains import LLMChain
 from pydantic import BaseModel, Field, field_validator
-from langchain_classic.output_parsers import PydanticOutputParser
 from langchain_core.output_parsers import JsonOutputParser 
 import psycopg2
 from datetime import datetime
 import os
 import json
 import random
-from datetime import datetime, timedelta
+from datetime import datetime
 import time
 from faker import Faker
-import re
 
 fake = Faker()
 CATEGORIES = ["Technical", "Billing", "Feature Request", "Account", "Other"]
@@ -36,13 +32,11 @@ class TicketGenerator():
         self.json_parser = JsonOutputParser()
 
         # initialize kafka configs
-        # maybe add initialization 
-        # kafka_conf = {
-        #     'bootstrap.servers': 'localhost:9092',
-        #     'client.id': 'ticket_generator'
-        # }
-        
-        # self.producer = Producer(kafka_conf)
+        kafka_conf = {
+            'bootstrap.servers': "127.0.0.1:29092",
+            'client.id': 'ticket-generator'
+        }
+        self.producer = Producer(kafka_conf)
 
     def generate_ticket(self):
         """
@@ -64,11 +58,10 @@ class TicketGenerator():
             "- description: 2–6 sentences, include one concrete detail (error msg, step, or expectation).\n\n"
             )
         )
-        # chain = LLMChain(llm=self.llm, prompt = prompt)
         chain = (prompt | self.llm | self.json_parser)
+
         try:
             result = chain.invoke({"category": category})
-            print(result)
             payload = TicketPayload(**result)
             subject = payload.subject
             description = payload.description
@@ -90,11 +83,32 @@ class TicketGenerator():
             'browser': random.choice(['Chrome', 'Firefox', 'Safari', 'Edge'])
         }
         }
+    
+    @staticmethod
+    def delivery_report(err, msg):
+        """Kafka delivery callback"""
+        if err is not None:
+            print(f'Message delivery failed: {err}')
+        else:
+            print(f'Message delivered to {msg.topic()} [{msg.partition()}]')
         
     def produce_ticket(self, num_tickets = 100, delay = 2):
-        pass
+        for i in range(num_tickets):
+            ticket = self.generate_ticket()
+            self.producer.produce(
+                topic = 'support_tickets',
+                key = ticket['ticket_id'],
+                value = json.dumps(ticket),
+                callback = TicketGenerator.delivery_report
+            )
+            self.producer.poll(0)
+            print(f"Generated ticket {i+1}/{num_tickets}: {ticket['ticket_id']}")
+            time.sleep(delay)
+        self.producer.flush()
+        print('All tickets generated!')
 
 if __name__ == '__main__':
-    test = TicketGenerator()
-    print(test.generate_ticket())
+    tg = TicketGenerator()
+    print(tg.generate_ticket())
+    tg.produce_ticket(10, delay=0.5)
 
