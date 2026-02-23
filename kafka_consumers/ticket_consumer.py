@@ -2,11 +2,10 @@ import logging
 import json
 from confluent_kafka import Consumer, Producer, KafkaError
 from langchain_community.llms import Ollama
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain.schema import Document
+from langchain_core.documents import Document
 import psycopg2
 from datetime import datetime
 import os
@@ -34,7 +33,7 @@ class TicketProcessor:
                                         user = 'airflow_user', password= 'airflow_pass')
         
         self.producer = Producer({
-            'bootstrap.servers': 'localhost:9092',
+            'bootstrap.servers': "127.0.0.1:29092",
             'client.id': 'ticket-processor'
         })
 
@@ -76,10 +75,10 @@ class TicketProcessor:
             Format your response as: sentiment|score
             Example: negative|0.85
             """)
-        chain = LLMChain(llm=self.llm, prompt=prompt)
+        chain = prompt | self.llm
         
         try:
-            result = chain.run(description=ticket_data['description'])
+            result = chain.invoke({'description':ticket_data['description']})
             parts = result.strip().split('|')
             sentiment = parts[0].strip().lower()
             score = float(parts[1].strip()) if len(parts) > 1 else 0.5
@@ -205,7 +204,7 @@ class TicketProcessor:
         logger.info(f"Similar tickets: {similar_tickets}")
 
         # generate response
-        response = self.generate_response(ticket_data)
+        response = self.generate_response(ticket_data,similar_tickets)
         logger.info(f"Generated Response (preview): {response[:100]}")
 
         # prepare processed data
@@ -243,7 +242,7 @@ class TicketProcessor:
 def main():
     # Consumer loop
     conf = {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': "127.0.0.1:29092",
         'group.id': 'ticket-processor-group',
         'auto.offset.reset': 'earliest'
     }
