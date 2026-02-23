@@ -29,8 +29,8 @@ class TicketProcessor:
             persist_directory="./models/chroma_db"
         )
 
-        self.db_conn = psycopg2.connect(host = 'localhost', database = 'support_intelligence',
-                                        user = 'airflow_user', password= 'airflow_pass')
+        self.db_conn = psycopg2.connect(host = '127.0.0.1', database = 'support_intelligence',
+                                        user = 'postgres', password= 'postgres')
         
         self.producer = Producer({
             'bootstrap.servers': "127.0.0.1:29092",
@@ -134,7 +134,6 @@ class TicketProcessor:
     def save_to_database(self, ticket_data, processed_data):
         curr = self.db_conn.cursor()
         try:
-            print('meow')
             curr.execute(
                 """
                 INSERT INTO tickets
@@ -156,7 +155,6 @@ class TicketProcessor:
                     datetime.now(),
                     'processed'
 ))
-            print('wolf')
             curr.execute("""
                 INSERT INTO ticket_responses
                 (ticket_id, suggested_response, similar_ticket_ids)
@@ -168,7 +166,6 @@ class TicketProcessor:
                     processed_data['similar_tickets']
 
                 ))
-            print('eh')
             self.db_conn.commit()
             logger.info(f"Saved ticket {ticket_data['ticket_id']} to database")
         except Exception as e:

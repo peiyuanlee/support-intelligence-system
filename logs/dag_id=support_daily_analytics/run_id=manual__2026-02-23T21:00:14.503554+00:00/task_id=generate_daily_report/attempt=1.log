@@ -1,0 +1,34 @@
+[2026-02-23T21:00:16.349+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-02-23T21:00:16.366+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: support_daily_analytics.generate_daily_report manual__2026-02-23T21:00:14.503554+00:00 [queued]>
+[2026-02-23T21:00:16.368+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: support_daily_analytics.generate_daily_report manual__2026-02-23T21:00:14.503554+00:00 [queued]>
+[2026-02-23T21:00:16.368+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 2
+[2026-02-23T21:00:16.372+0000] {taskinstance.py:2330} INFO - Executing <Task(PostgresOperator): generate_daily_report> on 2026-02-23 21:00:14.503554+00:00
+[2026-02-23T21:00:16.377+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=810) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2026-02-23T21:00:16.377+0000] {standard_task_runner.py:64} INFO - Started process 811 to run task
+[2026-02-23T21:00:16.377+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'support_daily_analytics', 'generate_daily_report', 'manual__2026-02-23T21:00:14.503554+00:00', '--job-id', '15', '--raw', '--subdir', 'DAGS_FOLDER/daily_analytics_dag.py', '--cfg-path', '/tmp/tmpjq0gl4e6']
+[2026-02-23T21:00:16.378+0000] {standard_task_runner.py:91} INFO - Job 15: Subtask generate_daily_report
+[2026-02-23T21:00:16.445+0000] {task_command.py:426} INFO - Running <TaskInstance: support_daily_analytics.generate_daily_report manual__2026-02-23T21:00:14.503554+00:00 [running]> on host 5987a9aab3ce
+[2026-02-23T21:00:16.547+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='support_team' AIRFLOW_CTX_DAG_ID='support_daily_analytics' AIRFLOW_CTX_TASK_ID='generate_daily_report' AIRFLOW_CTX_EXECUTION_DATE='2026-02-23T21:00:14.503554+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-02-23T21:00:14.503554+00:00'
+[2026-02-23T21:00:16.548+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-02-23T21:00:16.553+0000] {sql.py:282} INFO - Executing: 
+            SELECT date, total_tickets, urgent_tickets,
+            ROUND(avg_sentiment_score,2) as avg_sentiment,
+            top_category
+            FROM daily_analytics
+            WHERE date = CURRENT_DATE - INTERVAL '1 day'
+            
+[2026-02-23T21:00:16.563+0000] {base.py:84} INFO - Using connection ID '***_support' for task execution.
+[2026-02-23T21:00:16.570+0000] {base.py:84} INFO - Using connection ID '***_support' for task execution.
+[2026-02-23T21:00:16.575+0000] {sql.py:495} INFO - Running statement: 
+            SELECT date, total_tickets, urgent_tickets,
+            ROUND(avg_sentiment_score,2) as avg_sentiment,
+            top_category
+            FROM daily_analytics
+            WHERE date = CURRENT_DATE - INTERVAL '1 day'
+            , parameters: None
+[2026-02-23T21:00:16.577+0000] {sql.py:504} INFO - Rows affected: 1
+[2026-02-23T21:00:16.577+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-02-23T21:00:16.592+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=support_daily_analytics, task_id=generate_daily_report, run_id=manual__2026-02-23T21:00:14.503554+00:00, execution_date=20260223T210014, start_date=20260223T210016, end_date=20260223T210016
+[2026-02-23T21:00:16.633+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-02-23T21:00:16.643+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-02-23T21:00:16.644+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

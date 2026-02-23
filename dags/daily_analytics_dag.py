@@ -16,7 +16,8 @@ def calculate_daily_metrics(**context):
     conn = hook.get_conn()
     curr = conn.cursor()
 
-    execution_date = context['execution_date'].date()
+    execution_date = context['logical_date'].date()
+    # execution_date = (context["data_interval_end"] - timedelta(days=1)).date()
     
     curr.execute(
         """
@@ -37,8 +38,12 @@ def calculate_daily_metrics(**context):
             avg_sentiment_score = EXCLUDED.avg_sentiment_score,
             top_category = EXCLUDED.top_category,
             avg_response_time_minutes = EXCLUDED.avg_response_time_minutes
+        RETURNING date, total_tickets, urgent_tickets;
         """, (execution_date, execution_date)
     )
+    row = curr.fetchone()
+    print("Inserted/updated:", row)
+
     conn.commit()
     curr.close()
     conn.close()
