@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS tickets (
 );
 
 -- Processed responses table
+DROP TABLE IF EXISTS ticket_responses;
 CREATE TABLE IF NOT EXISTS ticket_responses (
     response_id SERIAL PRIMARY KEY,
     ticket_id VARCHAR(100) REFERENCES tickets(ticket_id),

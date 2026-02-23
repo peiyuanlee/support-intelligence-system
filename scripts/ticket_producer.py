@@ -110,5 +110,5 @@ class TicketGenerator():
 if __name__ == '__main__':
     tg = TicketGenerator()
     print(tg.generate_ticket())
-    tg.produce_ticket(10, delay=0.5)
+    tg.produce_ticket(1, delay=0.5)
 

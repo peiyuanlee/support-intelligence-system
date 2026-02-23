@@ -73,6 +73,7 @@ class TicketProcessor:
             Provide a confidence score between 0 and 1.
 
             Format your response as: sentiment|score
+            Do not add other texts to the response.
             Example: negative|0.85
             """)
         chain = prompt | self.llm
@@ -86,6 +87,7 @@ class TicketProcessor:
             return sentiment, score
         except Exception as e:
             logger.error(f"Error analyzing sentiment: {e}")
+            print('bitch')
             return 'neutral', 0.5
         
     def find_similar_tickets(self, ticket_data, k = 3):
@@ -132,6 +134,7 @@ class TicketProcessor:
     def save_to_database(self, ticket_data, processed_data):
         curr = self.db_conn.cursor()
         try:
+            print('meow')
             curr.execute(
                 """
                 INSERT INTO tickets
@@ -153,10 +156,11 @@ class TicketProcessor:
                     datetime.now(),
                     'processed'
 ))
+            print('wolf')
             curr.execute("""
                 INSERT INTO ticket_responses
-                (ticket_id, suggested_response, confidence_score, similar_ticket_ids)
-                VALUES (%s, %s, %s, %s)
+                (ticket_id, suggested_response, similar_ticket_ids)
+                VALUES (%s, %s, %s)
                 """, (
                     ticket_data['ticket_id'],
                     processed_data['suggested_response'],
@@ -164,6 +168,7 @@ class TicketProcessor:
                     processed_data['similar_tickets']
 
                 ))
+            print('eh')
             self.db_conn.commit()
             logger.info(f"Saved ticket {ticket_data['ticket_id']} to database")
         except Exception as e:
