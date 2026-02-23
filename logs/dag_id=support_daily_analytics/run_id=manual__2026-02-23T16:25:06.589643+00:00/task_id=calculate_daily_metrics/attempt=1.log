@@ -1,0 +1,51 @@
+[2026-02-23T16:25:07.141+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-02-23T16:25:07.189+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: support_daily_analytics.calculate_daily_metrics manual__2026-02-23T16:25:06.589643+00:00 [queued]>
+[2026-02-23T16:25:07.197+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: support_daily_analytics.calculate_daily_metrics manual__2026-02-23T16:25:06.589643+00:00 [queued]>
+[2026-02-23T16:25:07.197+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 2
+[2026-02-23T16:25:07.209+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): calculate_daily_metrics> on 2026-02-23 16:25:06.589643+00:00
+[2026-02-23T16:25:07.219+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=532) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2026-02-23T16:25:07.219+0000] {standard_task_runner.py:64} INFO - Started process 533 to run task
+[2026-02-23T16:25:07.218+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'support_daily_analytics', 'calculate_daily_metrics', 'manual__2026-02-23T16:25:06.589643+00:00', '--job-id', '8', '--raw', '--subdir', 'DAGS_FOLDER/daily_analytics_dag.py', '--cfg-path', '/tmp/tmpc53htlys']
+[2026-02-23T16:25:07.220+0000] {standard_task_runner.py:91} INFO - Job 8: Subtask calculate_daily_metrics
+[2026-02-23T16:25:07.282+0000] {task_command.py:426} INFO - Running <TaskInstance: support_daily_analytics.calculate_daily_metrics manual__2026-02-23T16:25:06.589643+00:00 [running]> on host 4a2d42d9005c
+[2026-02-23T16:25:07.377+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='support_team' AIRFLOW_CTX_DAG_ID='support_daily_analytics' AIRFLOW_CTX_TASK_ID='calculate_daily_metrics' AIRFLOW_CTX_EXECUTION_DATE='2026-02-23T16:25:06.589643+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-02-23T16:25:06.589643+00:00'
+[2026-02-23T16:25:07.378+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-02-23T16:25:07.406+0000] {base.py:84} INFO - Using connection ID 'postgres_support' for task execution.
+[2026-02-23T16:25:07.407+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-02-23T16:25:07.408+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 235, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 252, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/daily_analytics_dag.py", line 16, in calculate_daily_metrics
+    conn = hook.get_conn()
+           ^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/postgres/hooks/postgres.py", line 175, in get_conn
+    self.conn = psycopg2.connect(**conn_args)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: No such file or directory
+	Is the server running locally and accepting connections on that socket?
+
+[2026-02-23T16:25:07.432+0000] {taskinstance.py:1206} INFO - Marking task as UP_FOR_RETRY. dag_id=support_daily_analytics, task_id=calculate_daily_metrics, run_id=manual__2026-02-23T16:25:06.589643+00:00, execution_date=20260223T162506, start_date=20260223T162507, end_date=20260223T162507
+[2026-02-23T16:25:07.448+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 8 for task calculate_daily_metrics (connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: No such file or directory
+	Is the server running locally and accepting connections on that socket?
+; 533)
+[2026-02-23T16:25:07.555+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2026-02-23T16:25:07.573+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/models/baseoperator.py:1297 AirflowProviderDeprecationWarning: Call to deprecated class PostgresOperator. (Please use `***.providers.common.sql.operators.sql.SQLExecuteQueryOperator`.Also, you can provide `hook_params={'schema': <database>}`.)
+[2026-02-23T16:25:07.592+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-02-23T16:25:07.593+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

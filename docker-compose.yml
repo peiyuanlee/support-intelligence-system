@@ -73,7 +73,7 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__CORE__FERNET_KEY: "0123456789abcdef0123456789abcdef"  
+      AIRFLOW__CORE__FERNET_KEY: "fwcmXDk_ymT0rCZugugM-NvhJeftqJ-zfT2e5G9Svss="  
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -93,7 +93,7 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__CORE__FERNET_KEY: "0123456789abcdef0123456789abcdef"
+      AIRFLOW__CORE__FERNET_KEY: "fwcmXDk_ymT0rCZugugM-NvhJeftqJ-zfT2e5G9Svss=" 
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -109,12 +109,26 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__CORE__FERNET_KEY: "0123456789abcdef0123456789abcdef"
+      AIRFLOW__CORE__FERNET_KEY: "fwcmXDk_ymT0rCZugugM-NvhJeftqJ-zfT2e5G9Svss=" 
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
     command: scheduler
+  
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=support_intelligence
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./scripts/initdb:/docker-entrypoint-initdb.d
 
 volumes:
+  db:
+    driver: local
   airflow_db:

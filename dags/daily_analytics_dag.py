@@ -27,7 +27,7 @@ def calculate_daily_metrics(**context):
             COUNT(*) as total_tickets,
             SUM(CASE WHEN urgency IN ('urgent', 'high') THEN 1 ELSE 0 END),
             AVG(sentiment_score) as avg_sentiment_score,
-            MODE() WITHIN GROUP (ORDER BY category) as top_category
+            MODE() WITHIN GROUP (ORDER BY category) as top_category,
             AVG(EXTRACT(EPOCH FROM (processed_at - created_at))/60) as avg_response_time_minutes
         FROM tickets
         WHERE DATE(created_at) = %s
@@ -35,7 +35,7 @@ def calculate_daily_metrics(**context):
             total_tickets = EXCLUDED.total_tickets,
             urgent_tickets = EXCLUDED.urgent_tickets,
             avg_sentiment_score = EXCLUDED.avg_sentiment_score,
-            top_category = EXCLUDED.top_category.
+            top_category = EXCLUDED.top_category,
             avg_response_time_minutes = EXCLUDED.avg_response_time_minutes
         """, (execution_date, execution_date)
     )
@@ -65,7 +65,7 @@ with DAG(
             ROUND(avg_sentiment_score,2) as avg_sentiment,
             top_category
             FROM daily_analytics
-            WHERFE date = CURRENT_DATE - INTERVAL '1 day'
+            WHERE date = CURRENT_DATE - INTERVAL '1 day'
             """
     )
 
